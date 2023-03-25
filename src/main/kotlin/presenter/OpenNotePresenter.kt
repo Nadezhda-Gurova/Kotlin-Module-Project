@@ -1,35 +1,36 @@
 package presenter
 
-import Navigation
+import navigation.Destination
+import navigation.Screen
 import storage.Archive
-import view.ConsoleView
+import view.View
 
 class OpenNotePresenter(
-    private val navigation: Navigation,
     private val archive: Archive,
-    private val view: ConsoleView
-) : AbstractPresenter()  {
-    override fun loop() {
-        view.show("В этом архиве у вас есть следующие заметки:")
-        val allNotes = archive.getNotes()
-        for (note in allNotes){
-            view.show(note)
-        }
-        getNote(allNotes)
-    }
+    private val view: View
+) : Presenter {
 
-    private fun getNote(allNotes: List<String>) {
+    private fun getNote(allNotes: List<String>): Destination {
         while (true) {
-            view.show("Введите название заметки или 0 для возврата на предыдущий экран")
+            view.show("Введите название заметки или 0 для возврата на экран выбора архива")
             val noteName = view.input()
             if (noteName in allNotes) {
-                stop()
-                return navigation.showNote(archive.getNote(noteName))
+                return Destination.OpenScreen(Screen.ShowNoteScreen(archive.getNote(noteName)))
             }
-            if (noteName == "0"){
-                stop()
-                return navigation.back()
+            if (noteName == "0") {
+                return Destination.Back
             }
+        }
+    }
+
+    override fun show(): Destination {
+        while (true) {
+            view.show("В этом архиве у вас есть следующие заметки:")
+            val allNotes = archive.getNotes()
+            for (note in allNotes) {
+                view.show(note)
+            }
+            return getNote(allNotes)
         }
     }
 }

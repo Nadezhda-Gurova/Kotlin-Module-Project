@@ -1,22 +1,23 @@
 package presenter
 
-import Navigation
+import navigation.Destination
 import storage.Note
 import view.View
 
 class ShowNotePresenter(
-    private val navigation: Navigation,
     private val note: Note,
     private val view: View
-) : AbstractPresenter() {
-    override fun loop() {
-        view.show("Содержимое заметки")
-        view.show(note.content)
+) : Presenter {
+
+    override fun show(): Destination {
         while (true) {
-            view.show("Введите 0, чтобы вернуться на экран просмотра архива")
-            if (view.input() == "0") {
-                stop()
-                navigation.back()
+            view.show("Содержимое заметки")
+            view.show(note.content)
+            while (true) {
+                view.show("Введите 0, чтобы вернуться на экран просмотра архива")
+                if (view.input() == "0") {
+                    return Destination.Back
+                }
             }
         }
     }

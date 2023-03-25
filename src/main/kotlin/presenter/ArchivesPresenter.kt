@@ -1,33 +1,34 @@
 package presenter
 
-import Navigation
-import view.ConsoleView
+import navigation.Destination
+import navigation.Screen
+import view.View
 
 class ArchivesPresenter(
-    private val navigation: Navigation,
-    private val view: ConsoleView
-) : AbstractPresenter() {
+    private val view: View
+) : Presenter {
 
-    override fun loop() {
-        view.show("Выберите пункт.\n" +
-                "0. Создать архив\n" +
-                "1. Это мой уже созданный архив\n" +
-                "2. Выход ")
+    override fun show(): Destination {
+        while (true){
+            view.show(
+                "Выберите пункт.\n" +
+                        "0. Создать архив\n" +
+                        "1. Это мой уже созданный архив\n" +
+                        "2. Выход "
+            )
 
-        when (view.input()) {
-            "0" -> {
-                stop()
-                navigation.createArchive()
+            when (view.input()) {
+                "0" -> {
+                    return Destination.OpenScreen(Screen.CreateArchiveScreen)
+                }
+                "1" -> {
+                    return Destination.OpenScreen(Screen.OpenArchiveScreen)
+                }
+                "2" -> {
+                    return Destination.Exit
+                }
+                else -> view.show("Введите верное число")
             }
-            "1" -> {
-                stop()
-                navigation.openArchive()
-            }
-            "2" -> {
-                stop()
-                navigation.exit()
-            }
-            else -> view.show("Введите верное число")
         }
     }
 }

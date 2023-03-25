@@ -1,57 +1,65 @@
 package presenter
 
-import Navigation
+import navigation.Destination
+import navigation.Screen
 import storage.Storage
-import view.ConsoleView
+import view.View
 
 class OpenArchivePresenter(
-    private val navigation: Navigation,
     private val storage: Storage,
-    private val view: ConsoleView
-) : AbstractPresenter() {
-    override fun loop() {
+    private val view: View
+) : Presenter {
 
-        view.show(
-            "Выберите архив: \n${storage.getArchives().joinToString("\n")} \n" +
-                    "или введите 2 для возвращения на экран архивов"
-        )
-        val input = view.input()
-        if (input in storage.getArchives()) {
-            stop()
-            view.show(
-                "Выберите или создайте заметку: \n" +
-                        "0. Создать заметку\n" +
-                        "1. Это мой уже созданная заметка\n" +
-                        "2. Возвращение на экран архивов"
-            )
-            nextStep(input)
-        } else {
-            if (input == "2") {
-                stop()
-                navigation.back()
-            } else {
-                view.show("Введите название архива")
-            }
-        }
-
-    }
-
-    private fun nextStep(archiveName: String) {
+    private fun nextStep(archiveName: String): Destination {
         while (true) {
-            return when (view.input()) {
+            when (view.input()) {
                 "0" -> {
-                    stop()
-                    navigation.createNote(storage.getArchive(archiveName))
+                    return Destination.OpenScreen(
+                        Screen.CreateNoteScreen(
+                            storage.getArchive(
+                                archiveName
+                            )
+                        )
+                    )
                 }
                 "1" -> {
-                    stop()
-                    navigation.openNote(storage.getArchive(archiveName))
+                    return Destination.OpenScreen(
+                        Screen.OpenNoteScreen(
+                            storage.getArchive(
+                                archiveName
+                            )
+                        )
+                    )
                 }
                 "2" -> {
-                    stop()
-                    navigation.back()
+                    return Destination.Back
                 }
                 else -> view.show("Введите верное число")
+            }
+        }
+    }
+
+    override fun show(): Destination {
+        while (true) {
+            view.show(
+                "Выберите архив: \n${storage.getArchives().joinToString("\n")} \n" +
+                        "или введите 2 для возвращения на экран архивов"
+            )
+            val input = view.input()
+            if (input in storage.getArchives()) {
+                view.show(
+                    "Выберите или создайте заметку: \n" +
+                            "0. Создать заметку\n" +
+                            "1. Это мой уже созданная заметка\n" +
+                            "2. Возвращение на экран архивов"
+                )
+                return nextStep(input)
+            } else {
+                if (input == "2") {
+                    return Destination.Back
+                } else {
+                    view.show("Введите название архива")
+                }
             }
         }
     }
