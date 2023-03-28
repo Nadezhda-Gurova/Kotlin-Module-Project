@@ -10,14 +10,14 @@ class OpenNotePresenter(
     private val view: View
 ) : Presenter {
 
-    private fun getNote(allNotes: List<String>): Destination {
+    private fun getNote(): Destination {
         while (true) {
-            view.show("Введите название заметки или 0 для возврата на экран выбора архива")
-            val noteName = view.input()
-            if (noteName in allNotes) {
-                return Destination.OpenScreen(Screen.ShowNoteScreen(archive.getNote(noteName)))
+            view.show("Введите индекс заметки или -1 для возврата на экран выбора архива")
+            val noteIndex = view.input().toIntOrNull()
+            if (noteIndex != null && noteIndex >= 0 && noteIndex < archive.getNotes().size) {
+                return Destination.OpenScreen(Screen.ShowNoteScreen(archive.getNote(noteIndex)))
             }
-            if (noteName == "0") {
+            if (noteIndex == -1) {
                 return Destination.Back
             }
         }
@@ -30,7 +30,7 @@ class OpenNotePresenter(
             for (note in allNotes) {
                 view.show(note)
             }
-            return getNote(allNotes)
+            return getNote()
         }
     }
 }

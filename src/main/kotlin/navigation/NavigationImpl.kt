@@ -46,9 +46,14 @@ class NavigationImpl(
             Screen.OpenArchiveScreen -> addToStackAndStart(
                 OpenArchivePresenter(storage, view)
             )
-            is Screen.CreateNoteScreen -> addToStackAndStart(
+            is Screen.CreateNoteScreen -> {
+                stack.push(
+                    OpenNotePresenter(screen.archive, view)
+                )
+                addToStackAndStart(
                 CreateNotePresenter(screen.archive, view)
             )
+            }
             is Screen.OpenNoteScreen -> addToStackAndStart(
                 OpenNotePresenter(screen.archive, view)
             )

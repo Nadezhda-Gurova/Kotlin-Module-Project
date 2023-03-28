@@ -10,14 +10,14 @@ class OpenArchivePresenter(
     private val view: View
 ) : Presenter {
 
-    private fun nextStep(archiveName: String): Destination {
+    private fun nextStep(archiveNumber: Int): Destination {
         while (true) {
             when (view.input()) {
                 "0" -> {
                     return Destination.OpenScreen(
                         Screen.CreateNoteScreen(
                             storage.getArchive(
-                                archiveName
+                                archiveNumber
                             )
                         )
                     )
@@ -26,7 +26,7 @@ class OpenArchivePresenter(
                     return Destination.OpenScreen(
                         Screen.OpenNoteScreen(
                             storage.getArchive(
-                                archiveName
+                                archiveNumber
                             )
                         )
                     )
@@ -42,11 +42,13 @@ class OpenArchivePresenter(
     override fun show(): Destination {
         while (true) {
             view.show(
-                "Выберите архив: \n${storage.getArchives().joinToString("\n")} \n" +
-                        "или введите 2 для возвращения на экран архивов"
+                "Выберите архив по его номеру в списке: \n${
+                    storage.getArchives().joinToString("\n")
+                } \n" +
+                        "или введите -1 для возвращения на экран архивов"
             )
-            val input = view.input()
-            if (input in storage.getArchives()) {
+            val input = view.input().toIntOrNull()
+            if (input != null && input < storage.getArchives().size && input >= 0) {
                 view.show(
                     "Выберите или создайте заметку: \n" +
                             "0. Создать заметку\n" +
@@ -55,7 +57,7 @@ class OpenArchivePresenter(
                 )
                 return nextStep(input)
             } else {
-                if (input == "2") {
+                if (input == -1) {
                     return Destination.Back
                 } else {
                     view.show("Введите название архива")

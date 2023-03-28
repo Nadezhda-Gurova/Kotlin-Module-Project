@@ -1,18 +1,17 @@
 package storage
 
-class Archive {
-
-    private val notesStorage = mutableMapOf<String, Note>()
+class Archive(val name: String) {
+    private val notesStorage = mutableListOf<Note>()
 
     fun addNote(name: String, content: String) {
-        notesStorage[name] = Note(content)
+        notesStorage.add(Note(name, content))
     }
 
     fun getNotes(): List<String> {
-        return notesStorage.keys.toList()
+        return notesStorage.mapIndexed { index, note -> "$index - ${note.name}" }
     }
 
-    fun getNote(name: String): Note {
-        return notesStorage[name]!!
+    fun getNote(index: Int): Note {
+        return notesStorage[index]
     }
 }

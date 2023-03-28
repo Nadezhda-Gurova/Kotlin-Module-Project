@@ -1,18 +1,18 @@
 package storage
 
 class StorageImpl : Storage {
-    private val storage = mutableMapOf<String, Archive>()
+    private val storage = mutableListOf<Archive>()
 
     override fun addArchive(name: String) {
-        storage[name] = Archive()
+        storage.add(Archive(name))
     }
 
     override fun getArchives(): List<String> {
-        return storage.keys.toList()
+        return storage.mapIndexed { index, archive -> "$index - ${archive.name}" }
     }
 
-    override fun getArchive(name: String): Archive {
-        return storage[name]!!
+    override fun getArchive(index: Int): Archive {
+        return storage[index]
     }
 
 
