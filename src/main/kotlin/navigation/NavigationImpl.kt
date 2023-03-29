@@ -60,6 +60,9 @@ class NavigationImpl(
             is Screen.ShowNoteScreen -> addToStackAndStart(
                 ShowNotePresenter(screen.note, view)
             )
+            is Screen.ArchiveScreen -> addToStackAndStart(
+                ArchivePresenter(screen.archive, view)
+            )
         }
     }
 }
